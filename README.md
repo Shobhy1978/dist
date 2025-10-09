@@ -1,4 +1,4 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+**This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
@@ -34,3 +34,39 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**# Event Planner Full-Stack Project
+
+Build a complete full-stack event planning application with authentication, database integration, and deployment.
+
+## What You'll Build
+
+A comprehensive event management platform featuring:
+
+- **User Authentication**: Sign up, login, and session management
+- **Event Management**: Create, edit, delete, and view events
+- **RSVP System**: Users can RSVP to events
+- **Dashboard**: Personal dashboard with user's events and RSVPs
+- **Filtering & Search**: Find events by category and location
+- **Responsive Design**: Mobile-friendly interface
+- **Database Integration**: PostgreSQL with Supabase
+- **Deployment**: Live application on Vercel
+
+## Key Learning Objectives
+
+- **Full-Stack Development**: Complete application with frontend and backend
+- **Authentication**: User management and session handling
+- **Database Design**: Schema design and relationships
+- **Server Actions**: Form handling and data mutations
+- **Real-World Patterns**: Production-ready code structure
+- **Deployment**: Going from development to production
+
+## Technologies Used
+
+- Next.js App Router
+- TypeScript
+- TailwindCSS
+- Supabase (PostgreSQL)
+- AuthJS (NextAuth)
+- Vercel (Deployment)
+
+This project demonstrates how to build a production-ready full-stack application using modern Next.js patterns and best practices.
