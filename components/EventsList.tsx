@@ -37,7 +37,7 @@ export default function EventsList({
       {/* Search and Filter */}
       <div className="card p-6">
         <form onSubmit={handleSearch} className="flex gap-4 flex-wrap">
-          <div className="flex-1 mn-w-64">
+          <div className="flex-1 min-w-64">
             <input
               type="text"
               name="search"
@@ -77,10 +77,10 @@ export default function EventsList({
 
       {/* Events Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {events.map((event, key) => (
+        {events.map((event) => (
           <div
-            key={key}
-            className="card overflow-hidden hover:shadow-lg tansition-shadow"
+            key={event.id}
+            className="card overflow-hidden hover:shadow-lg transition-shadow"
           >
             <div className="p-6">
               <h3 className="text-xl font-semibold text-foreground mb-2">

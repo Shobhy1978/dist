@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { z } from "zod";
 import { prisma } from "./prisma";
 import { revalidateTag } from "next/cache";
+import { redirect } from "next/navigation";
 import { RSVPStatus } from "./models";
 
 const eventSchema = z.object({
@@ -15,13 +16,12 @@ const eventSchema = z.object({
   isPublic: z.string().optional(),
 });
 
-// eslint-disable-next-line
-export async function createEvent(_: any, formData: FormData) {
+export async function createEvent(formData: FormData): Promise<void> {
   try {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return { success: false, error: "Not authenticated" };
+      redirect('/login');
     }
 
     const rawData = {
@@ -49,13 +49,79 @@ export async function createEvent(_: any, formData: FormData) {
       },
     });
 
-    return { success: true, eventId: event.id };
+    redirect(`/events/${event.id}`);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors[0].message };
+      throw new Error(error.errors[0].message);
     }
 
-    return { success: false, error: "Failed to create event", eventId: null };
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function updateEvent(formData: FormData): Promise<void> {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      redirect('/login');
+    }
+
+    const eventId = formData.get("eventId");
+
+    const rawData = {
+      title: formData.get("title"),
+      description: formData.get("description"),
+      date: formData.get("date"),
+      location: formData.get("location"),
+      maxAttendees: formData.get("maxAttendees"),
+      isPublic: formData.get("isPublic"),
+    };
+
+    const validatedData = eventSchema.parse(rawData);
+
+    if (!eventId || typeof eventId !== "string") {
+      throw new Error("Missing event id");
+    }
+
+    const existingEvent = await prisma.event.findUnique({
+      where: { id: eventId },
+    });
+
+    if (!existingEvent) {
+      redirect('/events');
+    }
+
+    if (existingEvent.userId !== session.user.id) {
+      redirect(`/events/${eventId}`);
+    }
+
+    const event = await prisma.event.update({
+      where: { id: eventId },
+      data: {
+        title: validatedData.title,
+        description: validatedData.description,
+        date: new Date(validatedData.date),
+        location: validatedData.location,
+        maxAttendees: validatedData.maxAttendees
+          ? Number(validatedData.maxAttendees)
+          : null,
+        isPublic: validatedData.isPublic === "on",
+      },
+    });
+
+    revalidateTag("events");
+    revalidateTag(`event-${event.id}`);
+
+    redirect(`/events/${event.id}`);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      throw new Error(error.errors[0].message);
+    }
+
+    console.error(error);
+    throw error;
   }
 }
 

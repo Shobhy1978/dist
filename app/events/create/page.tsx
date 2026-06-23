@@ -1,20 +1,7 @@
-"use client";
-
 import { createEvent } from "@/lib/event-actions";
-import { useRouter } from "next/navigation";
-import { useActionState } from "react";
+import Link from "next/link";
 
 export default function CreateEventPage() {
-  const router = useRouter();
-  const [state, formAction, isPending] = useActionState(createEvent, {
-    success: false,
-    eventId: null,
-    error: "",
-  });
-
-  if (state.success && state.eventId) {
-    router.push(`/events/${state.eventId}`);
-  }
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-8">
@@ -23,7 +10,7 @@ export default function CreateEventPage() {
           Fill out the form below to create your event
         </p>
       </div>
-      <form className="space-y-6" action={formAction}>
+      <form className="space-y-6" action={createEvent}>
         <div>
           <label
             htmlFor="title"
@@ -132,22 +119,13 @@ export default function CreateEventPage() {
           </div>
         </div>
 
-        {state.error && (
-          <div className="bg-red-600/10 border border-red-600/20 rounded-md p-4">
-            <p className="text-sm text-red-400">{state.error}</p>
-          </div>
-        )}
         <div className="flex gap-4">
-          <button className="btn-primary" type="submit" disabled={isPending}>
-            {isPending ? "Creating..." : "Create Event"}
+          <button className="btn-primary" type="submit">
+            Create Event
           </button>
-          <button
-            className="btn-secondary"
-            type="button"
-            onClick={() => router.back()}
-          >
+          <Link href="/events" className="btn-secondary">
             Cancel
-          </button>
+          </Link>
         </div>
       </form>
     </div>

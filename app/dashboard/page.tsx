@@ -3,6 +3,15 @@ import { Event, EventRSVP } from "@/lib/models";
 import { format } from "date-fns";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
+
+async function getBaseUrl() {
+  const headersList = await headers();
+  const host = headersList.get("host");
+  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+  if (!host) throw new Error("Missing host header");
+  return `${protocol}://${host}`;
+}
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -11,23 +20,19 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const userRSVPsRes = await fetch(
-    `${process.env.NEXT_PUBLIC_APP_URL}/api/dashboard/rsvps`,
-    {
-      next: { tags: ["rsvps"] },
-    }
-  );
+  const baseUrl = await getBaseUrl();
+
+  const userRSVPsRes = await fetch(`${baseUrl}/api/dashboard/rsvps`, {
+    next: { tags: ["rsvps"] },
+  });
 
   const userRSVPs: EventRSVP[] = userRSVPsRes.ok
     ? await userRSVPsRes.json()
     : [];
 
-  const userEventsRes = await fetch(
-    `${process.env.NEXT_PUBLIC_APP_URL}/api/dashboard/events`,
-    {
-      next: { tags: ["events"] },
-    }
-  );
+  const userEventsRes = await fetch(`${baseUrl}/api/dashboard/events`, {
+    next: { tags: ["events"] },
+  });
 
   const userEvents: Event[] = userEventsRes.ok
     ? await userEventsRes.json()

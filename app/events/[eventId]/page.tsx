@@ -5,6 +5,15 @@ import { Event, RSVPStatus } from "@/lib/models";
 import { format } from "date-fns";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
+
+async function getBaseUrl() {
+  const headersList = await headers();
+  const host = headersList.get("host");
+  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+  if (!host) throw new Error("Missing host header");
+  return `${protocol}://${host}`;
+}
 
 export default async function EventPage({
   params,
@@ -14,9 +23,10 @@ export default async function EventPage({
   const { eventId } = await params;
 
   const session = await auth();
+  const baseUrl = await getBaseUrl();
 
   const eventResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_APP_URL}/api/events/${eventId}`,
+    `${baseUrl}/api/events/${eventId}`,
     { next: { tags: [`event-${eventId}`] } }
   );
 

@@ -1,6 +1,15 @@
 import { auth } from "@/auth";
 import EventsList from "@/components/EventsList";
 import Link from "next/link";
+import { headers } from "next/headers";
+
+async function getBaseUrl() {
+  const headersList = await headers();
+  const host = headersList.get("host");
+  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+  if (!host) throw new Error("Missing host header");
+  return `${protocol}://${host}`;
+}
 
 export default async function EventsPage({
   searchParams,
@@ -14,8 +23,10 @@ export default async function EventsPage({
   if (sp.search) params.set("search", sp.search);
   if (sp.filter) params.set("filter", sp.filter);
 
+  const query = params.toString();
+  const baseUrl = await getBaseUrl();
   const eventsResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_APP_URL}/api/events?${params.toString()}`,
+    `${baseUrl}/api/events${query ? `?${query}` : ""}`,
     { next: { tags: ["events"] } }
   );
   const events = eventsResponse.ok ? await eventsResponse.json() : [];
